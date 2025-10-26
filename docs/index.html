@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Disease Prediction - AI-Powered Medical Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-heartbeat"></i>
+                    <span>HeartAI</span>
+                </div>
+                <nav class="nav">
+                    <a href="#home" class="nav-link active">Home</a>
+                    <a href="#predict" class="nav-link">Prediction</a>
+                    <a href="#about" class="nav-link">About</a>
+                    <a href="https://github.com/AKA-Akhil/heart-disease-prediction" target="_blank" class="nav-link">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">
+                        AI-Powered Heart Disease
+                        <span class="gradient-text">Prediction System</span>
+                    </h1>
+                    <p class="hero-description">
+                        Advanced machine learning model with 85% accuracy for early detection of heart disease risk.
+                        Built with MLOps best practices and deployed through automated CI/CD pipeline.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <div class="stat-number">85%</div>
+                            <div class="stat-label">Accuracy</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">303</div>
+                            <div class="stat-label">Training Samples</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">13</div>
+                            <div class="stat-label">Features</div>
+                        </div>
+                    </div>
+                    <div class="hero-buttons">
+                        <button class="btn btn-primary" onclick="scrollToSection('predict')">
+                            <i class="fas fa-stethoscope"></i>
+                            Try Prediction
+                        </button>
+                        <button class="btn btn-secondary" onclick="scrollToSection('about')">
+                            <i class="fas fa-info-circle"></i>
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="heart-animation">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Prediction Section -->
+    <section id="predict" class="prediction-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Heart Disease Risk Assessment</h2>
+                <p class="section-description">
+                    Enter patient information below to get an AI-powered risk assessment for heart disease.
+                </p>
+            </div>
+
+            <div class="prediction-container">
+                <form id="predictionForm" class="prediction-form">
+                    <div class="form-grid">
+                        <!-- Basic Information -->
+                        <div class="form-group">
+                            <label for="age">Age</label>
+                            <input type="number" id="age" name="age" min="1" max="120" required>
+                            <small>Patient's age in years</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="sex">Sex</label>
+                            <select id="sex" name="sex" required>
+                                <option value="">Select...</option>
+                                <option value="0">Female</option>
+                                <option value="1">Male</option>
+                            </select>
+                            <small>Biological sex</small>
+                        </div>
+
+                        <!-- Chest Pain -->
+                        <div class="form-group">
+                            <label for="cp">Chest Pain Type</label>
+                            <select id="cp" name="cp" required>
+                                <option value="">Select...</option>
+                                <option value="0">Typical Angina</option>
+                                <option value="1">Atypical Angina</option>
+                                <option value="2">Non-Anginal Pain</option>
+                                <option value="3">Asymptomatic</option>
+                            </select>
+                            <small>Type of chest pain experienced</small>
+                        </div>
+
+                        <!-- Blood Pressure -->
+                        <div class="form-group">
+                            <label for="trestbps">Resting Blood Pressure</label>
+                            <input type="number" id="trestbps" name="trestbps" min="80" max="200" required>
+                            <small>mmHg (normal: 90-140)</small>
+                        </div>
+
+                        <!-- Cholesterol -->
+                        <div class="form-group">
+                            <label for="chol">Cholesterol</label>
+                            <input type="number" id="chol" name="chol" min="100" max="600" required>
+                            <small>mg/dl (normal: <200)</small>
+                        </div>
+
+                        <!-- Fasting Blood Sugar -->
+                        <div class="form-group">
+                            <label for="fbs">Fasting Blood Sugar > 120 mg/dl</label>
+                            <select id="fbs" name="fbs" required>
+                                <option value="">Select...</option>
+                                <option value="0">No (≤120 mg/dl)</option>
+                                <option value="1">Yes (>120 mg/dl)</option>
+                            </select>
+                            <small>Fasting blood sugar level</small>
+                        </div>
+
+                        <!-- Resting ECG -->
+                        <div class="form-group">
+                            <label for="restecg">Resting ECG Results</label>
+                            <select id="restecg" name="restecg" required>
+                                <option value="">Select...</option>
+                                <option value="0">Normal</option>
+                                <option value="1">ST-T Abnormality</option>
+                                <option value="2">Left Ventricular Hypertrophy</option>
+                            </select>
+                            <small>Electrocardiographic results</small>
+                        </div>
+
+                        <!-- Max Heart Rate -->
+                        <div class="form-group">
+                            <label for="thalach">Maximum Heart Rate</label>
+                            <input type="number" id="thalach" name="thalach" min="60" max="220" required>
+                            <small>bpm (normal: 60-100 at rest)</small>
+                        </div>
+
+                        <!-- Exercise Induced Angina -->
+                        <div class="form-group">
+                            <label for="exang">Exercise Induced Angina</label>
+                            <select id="exang" name="exang" required>
+                                <option value="">Select...</option>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                            <small>Chest pain during exercise</small>
+                        </div>
+
+                        <!-- ST Depression -->
+                        <div class="form-group">
+                            <label for="oldpeak">ST Depression</label>
+                            <input type="number" id="oldpeak" name="oldpeak" min="0" max="10" step="0.1" required>
+                            <small>Exercise vs rest (0.0-6.2)</small>
+                        </div>
+
+                        <!-- Slope -->
+                        <div class="form-group">
+                            <label for="slope">Slope of Peak Exercise ST</label>
+                            <select id="slope" name="slope" required>
+                                <option value="">Select...</option>
+                                <option value="0">Upsloping</option>
+                                <option value="1">Flat</option>
+                                <option value="2">Downsloping</option>
+                            </select>
+                            <small>ST segment slope during exercise</small>
+                        </div>
+
+                        <!-- Number of Major Vessels -->
+                        <div class="form-group">
+                            <label for="ca">Major Vessels (0-3)</label>
+                            <select id="ca" name="ca" required>
+                                <option value="">Select...</option>
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                            <small>Colored by fluoroscopy</small>
+                        </div>
+
+                        <!-- Thalassemia -->
+                        <div class="form-group">
+                            <label for="thal">Thalassemia</label>
+                            <select id="thal" name="thal" required>
+                                <option value="">Select...</option>
+                                <option value="1">Normal</option>
+                                <option value="2">Fixed Defect</option>
+                                <option value="3">Reversible Defect</option>
+                            </select>
+                            <small>Blood disorder type</small>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="fillSampleData()">
+                            <i class="fas fa-flask"></i>
+                            Fill Sample Data
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="predictBtn">
+                            <i class="fas fa-brain"></i>
+                            Predict Risk
+                        </button>
+                        <button type="reset" class="btn btn-outline">
+                            <i class="fas fa-redo"></i>
+                            Reset Form
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Results Section -->
+                <div id="results" class="results-container" style="display: none;">
+                    <div class="results-content">
+                        <div class="result-header">
+                            <h3>Prediction Results</h3>
+                            <div id="resultStatus" class="result-status"></div>
+                        </div>
+                        <div class="result-details">
+                            <div class="result-item">
+                                <span class="result-label">Risk Level:</span>
+                                <span id="riskLevel" class="result-value"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Confidence:</span>
+                                <span id="confidence" class="result-value"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Model Version:</span>
+                                <span id="modelVersion" class="result-value"></span>
+                            </div>
+                        </div>
+                        <div class="result-disclaimer">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>This is a demonstration system for educational purposes. 
+                               Always consult with healthcare professionals for medical advice.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">About This Project</h2>
+                <p class="section-description">
+                    A complete MLOps implementation showcasing modern machine learning deployment practices.
+                </p>
+            </div>
+
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="card-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>Machine Learning</h3>
+                    <p>Random Forest classifier trained on UCI Heart Disease dataset with 85% accuracy and robust feature engineering.</p>
+                </div>
+
+                <div class="about-card">
+                    <div class="card-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>MLOps Pipeline</h3>
+                    <p>Complete CI/CD pipeline with automated testing, model training, containerization, and deployment using GitHub Actions.</p>
+                </div>
+
+                <div class="about-card">
+                    <div class="card-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Security & Quality</h3>
+                    <p>Comprehensive testing suite, security scanning with Trivy, and production-ready containerization with Docker.</p>
+                </div>
+
+                <div class="about-card">
+                    <div class="card-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Monitoring & Tracking</h3>
+                    <p>MLflow experiment tracking, model versioning, performance monitoring, and automated quality gates.</p>
+                </div>
+
+                <div class="about-card">
+                    <div class="card-icon">
+                        <i class="fas fa-api"></i>
+                    </div>
+                    <h3>API & Integration</h3>
+                    <p>FastAPI-based REST service with automatic documentation, input validation, and scalable architecture.</p>
+                </div>
+
+                <div class="about-card">
+                    <div class="card-icon">
+                        <i class="fas fa-code-branch"></i>
+                    </div>
+                    <h3>Open Source</h3>
+                    <p>Fully open-source implementation following industry best practices and available for learning and contribution.</p>
+                </div>
+            </div>
+
+            <div class="tech-stack">
+                <h3>Technology Stack</h3>
+                <div class="tech-items">
+                    <span class="tech-item">Python</span>
+                    <span class="tech-item">Scikit-learn</span>
+                    <span class="tech-item">FastAPI</span>
+                    <span class="tech-item">Docker</span>
+                    <span class="tech-item">GitHub Actions</span>
+                    <span class="tech-item">MLflow</span>
+                    <span class="tech-item">Pytest</span>
+                    <span class="tech-item">Trivy</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div class="logo">
+                        <i class="fas fa-heartbeat"></i>
+                        <span>HeartAI</span>
+                    </div>
+                    <p>AI-powered heart disease prediction system built with modern MLOps practices.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="https://github.com/AKA-Akhil/heart-disease-prediction" target="_blank">
+                        <i class="fab fa-github"></i> GitHub Repository
+                    </a>
+                    <a href="https://github.com/AKA-Akhil/heart-disease-prediction/actions" target="_blank">
+                        <i class="fas fa-cog"></i> CI/CD Pipeline
+                    </a>
+                    <a href="https://archive.ics.uci.edu/ml/datasets/heart+disease" target="_blank">
+                        <i class="fas fa-database"></i> Dataset Source
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Heart Disease Prediction System. Built for educational and research purposes.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
