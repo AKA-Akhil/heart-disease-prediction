@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir --user -r requirements.txt
 FROM python:3.10-slim
 
 # Copy Python packages from builder stage
-COPY --from=builder /root/.local /root/.local
+COPY --from=builder /root/.local /home/app/.local
 
 # Set working directory
 WORKDIR /app
@@ -33,11 +33,11 @@ RUN mkdir -p /app/models
 
 # Create non-root user for security
 RUN useradd --create-home --shell /bin/bash app
-RUN chown -R app:app /app
+RUN chown -R app:app /app /home/app/.local
 USER app
 
 # Add local packages to PATH
-ENV PATH=/root/.local/bin:$PATH
+ENV PATH=/home/app/.local/bin:$PATH
 
 # Expose port
 EXPOSE 8000
