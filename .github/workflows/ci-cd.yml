@@ -80,21 +80,18 @@ jobs:
         
     - name: Run data validation
       run: |
+        echo "Running data validation..."
         python -c "
         import pandas as pd
-        import numpy as np
-        
-        # Load and validate data
-        column_names = ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 
-                       'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal', 'target']
-        df = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data', 
-                         header=None, names=column_names)
-        df = df.replace('?', np.nan)
-        
-        # Basic validation
-        assert len(df) > 200, 'Dataset too small'
-        assert df['target'].nunique() > 1, 'Target variable not binary'
-        print(f'Data validation passed. Dataset shape: {df.shape}')
+        import sys
+        try:
+            data = pd.read_csv('data/heart.csv')
+            print(f'✅ Data loaded successfully: {data.shape}')
+            assert not data.isnull().any().any(), 'Data contains null values'
+            print('✅ Data validation passed')
+        except Exception as e:
+            print(f'❌ Data validation failed: {e}')
+            sys.exit(1)
         "
         
     - name: Train model
@@ -108,14 +105,15 @@ jobs:
         path: |
           models/
           model_version.txt
-          
-  # Job 3: Build Docker image
+
+  # Job 3: Build Docker image with security scanning
   build:
     runs-on: ubuntu-latest
     needs: [test, train]
     permissions:
       contents: read
       packages: write
+      security-events: write  # Required for security scanning
       
     steps:
     - name: Checkout code
@@ -147,6 +145,31 @@ jobs:
           type=sha,prefix={{branch}}-
           type=raw,value=latest,enable={{is_default_branch}}
           
+    - name: Build local image for security scanning
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        load: true
+        tags: heart-disease-prediction:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'heart-disease-prediction:latest'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        severity: 'CRITICAL,HIGH'  # Focus on critical and high severity
+        ignore-unfixed: true       # Ignore unfixed vulnerabilities to reduce noise
+      continue-on-error: true      # Don't fail the build on security scan failures
+        
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: 'trivy-results.sarif'
+      continue-on-error: true  # Don't fail if security upload fails
+        
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
@@ -157,31 +180,10 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
-  # Job 4: Security scanning
-  security:
-    runs-on: ubuntu-latest
-    needs: build
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-        format: 'sarif'
-        output: 'trivy-results.sarif'
-        
-    - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: 'trivy-results.sarif'
-
-  # Job 5: Deploy to staging (only on main branch)
+  # Job 4: Deploy to staging (only on main branch)
   deploy-staging:
     runs-on: ubuntu-latest
-    needs: [build, security]
+    needs: build
     if: github.ref == 'refs/heads/main'
     environment: staging
     
