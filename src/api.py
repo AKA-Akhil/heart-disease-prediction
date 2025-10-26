@@ -68,7 +68,7 @@ def load_model():
         except Exception as e:
             logger.warning(f"Could not load from MLflow: {e}")
             # Fallback to local file
-            model_path = "models/heart_disease_model.pkl"
+            model_path = "models/model-latest.joblib"
             if os.path.exists(model_path):
                 model = joblib.load(model_path)
                 # Try to get version from file

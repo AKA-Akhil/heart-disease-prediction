@@ -129,7 +129,7 @@ def train_and_save(X, y):
         joblib.dump(model_data, model_path)
 
         # Save as latest
-        latest_path = os.path.join(MODEL_DIR, "heart_disease_model.pkl")
+        latest_path = os.path.join(MODEL_DIR, "model-latest.joblib")
         joblib.dump(model, latest_path)
 
         # Save version
