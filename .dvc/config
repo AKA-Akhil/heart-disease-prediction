@@ -1,0 +1,16 @@
+# DVC configuration for data versioning
+# Run: dvc init
+# Run: dvc add data/
+# Run: dvc push
+
+# .dvc/config
+['core']
+    remote = origin
+    
+[state]
+    save_dvc_files = false
+
+['remote "origin"']
+    url = s3://your-bucket/dvc-storage
+    # Or use local storage: url = /path/to/storage
+    # Or use Google Drive: url = gdrive://your-drive-id

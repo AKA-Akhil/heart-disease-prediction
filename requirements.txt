@@ -1,0 +1,28 @@
+# Core ML libraries
+scikit-learn==1.7.2
+pandas==2.1.4
+numpy==2.2.6
+
+# API and web framework
+fastapi==0.115.6
+uvicorn==0.32.1
+pydantic==2.10.3
+httpx==0.27.2
+
+# Model versioning and tracking
+mlflow==2.20.0
+
+# Testing
+pytest==8.3.4
+pytest-cov==6.0.0
+
+# Data validation (removed great-expectations due to pandas conflict)
+# great-expectations==1.2.2
+
+# Monitoring and logging
+prometheus-client==0.21.1
+python-json-logger==2.0.7
+
+# Utilities
+python-dotenv==1.0.1
+requests==2.32.3
