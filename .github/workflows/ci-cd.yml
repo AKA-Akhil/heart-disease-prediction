@@ -82,7 +82,7 @@ jobs:
       run: |
         echo "Running data validation..."
         python -c "
-        import pandas as pd
+        import pandas as pd4,
         import numpy as np
         import sys
         try:
