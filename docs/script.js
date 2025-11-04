@@ -12,7 +12,6 @@ const predictBtn = document.getElementById('predictBtn');
 document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', handlePrediction);
     initializePipelineStatus();
-    setupContainerDownload();
 });
 
 // Initialize pipeline status monitoring
@@ -38,10 +37,6 @@ async function updatePipelineStatus() {
         if (data.workflow_runs && data.workflow_runs.length > 0) {
             const latestRun = data.workflow_runs[0];
             updatePipelineUI(latestRun);
-            
-            if (latestRun.status === 'completed' && latestRun.conclusion === 'success') {
-                enableContainerDownload(latestRun.head_sha);
-            }
         }
     } catch (error) {
         console.warn('Could not fetch pipeline status:', error);
@@ -167,75 +162,6 @@ function updateRunningStatus() {
             });
         }
     }, 2000);
-}
-
-// Setup container download functionality
-function setupContainerDownload() {
-    const downloadBtn = document.getElementById('downloadContainer');
-    downloadBtn.addEventListener('click', handleContainerDownload);
-}
-
-// Enable container download when build is successful
-function enableContainerDownload(commitSha) {
-    const downloadBtn = document.getElementById('downloadContainer');
-    downloadBtn.disabled = false;
-    downloadBtn.setAttribute('data-commit', commitSha);
-}
-
-// Handle container download
-function handleContainerDownload() {
-    const downloadBtn = document.getElementById('downloadContainer');
-    const commitSha = downloadBtn.getAttribute('data-commit') || 'latest';
-    
-    // GitHub Container Registry URL
-    const containerUrl = `ghcr.io/aka-akhil/heart-disease-prediction:main-${commitSha}`;
-    
-    // Show download instructions
-    showContainerInstructions(containerUrl, commitSha);
-}
-
-// Show container download instructions
-function showContainerInstructions(containerUrl, commitSha) {
-    const instructions = `
-📦 Container Download Instructions
-
-1. Using Docker CLI:
-   docker pull ${containerUrl}
-
-2. Using GitHub CLI:
-   gh auth login
-   docker pull ${containerUrl}
-
-3. Manual Download:
-   Visit: https://github.com/AKA-Akhil/heart-disease-prediction/pkgs/container/heart-disease-prediction
-
-Container: ${containerUrl}
-Commit: ${commitSha}
-
-Note: You may need to authenticate with GitHub Container Registry for private repositories.
-    `;
-    
-    // Create modal or use alert (simplified)
-    if (confirm('📦 Download Docker Container?\n\nThis will show you instructions to download the latest container image.')) {
-        // Create a temporary element to copy instructions
-        const textarea = document.createElement('textarea');
-        textarea.value = instructions;
-        document.body.appendChild(textarea);
-        textarea.select();
-        
-        try {
-            document.execCommand('copy');
-            showNotification('Container download instructions copied to clipboard!', 'success');
-        } catch (err) {
-            console.error('Copy failed:', err);
-            alert(instructions);
-        }
-        
-        document.body.removeChild(textarea);
-        
-        // Open GitHub packages page
-        window.open('https://github.com/AKA-Akhil/heart-disease-prediction/pkgs/container/heart-disease-prediction', '_blank');
-    }
 }
 
 // Handle form submission
@@ -405,4 +331,35 @@ function showResults() {
 
 function hideResults() {
     resultsDiv.style.display = 'none';
+}
+
+// Copy command to clipboard
+function copyToClipboard(elementId) {
+    const element = document.getElementById(elementId);
+    element.select();
+    element.setSelectionRange(0, 99999); // For mobile devices
+    
+    try {
+        document.execCommand('copy');
+        
+        // Show visual feedback
+        const copyBtn = element.nextElementSibling;
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = 'Copied!';
+        copyBtn.style.background = '#4CAF50';
+        
+        setTimeout(() => {
+            copyBtn.textContent = originalText;
+            copyBtn.style.background = '';
+        }, 2000);
+        
+    } catch (err) {
+        console.error('Could not copy text: ', err);
+        // Fallback for newer browsers
+        navigator.clipboard.writeText(element.value).then(() => {
+            console.log('Text copied to clipboard');
+        }).catch(err => {
+            console.error('Could not copy text: ', err);
+        });
+    }
 }

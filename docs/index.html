@@ -234,7 +234,29 @@
                     <span class="label">Confidence:</span>
                     <span id="confidence" class="value"></span>
                 </div>
+            </div>
+
+            <div class="container-download">
+                <h3>Container Download</h3>
+                <div class="download-section">
+                    <div class="download-item">
+                        <label for="docker-command">Docker Run Command:</label>
+                        <div class="command-field">
+                            <input type="text" id="docker-command" readonly 
+                                   value="docker run -p 8000:8000 ghcr.io/aka-akhil/heart-disease-prediction:latest">
+                            <button onclick="copyToClipboard('docker-command')" class="copy-btn">Copy</button>
+                        </div>
+                    </div>
+                    <div class="download-item">
+                        <label for="github-command">GitHub CLI Download:</label>
+                        <div class="command-field">
+                            <input type="text" id="github-command" readonly 
+                                   value="gh package download AKA-Akhil/heart-disease-prediction/heart-disease-prediction:latest">
+                            <button onclick="copyToClipboard('github-command')" class="copy-btn">Copy</button>
+                        </div>
+                    </div>
                 </div>
+            </div>
             </main>
         </div>
     </div>

@@ -173,7 +173,7 @@ body {
     border: 1px solid #404040;
 }
 
-.container-download h4 {
+.container-download h3 {
     color: #fff;
     margin-bottom: 1rem;
     font-size: 1.1rem;
@@ -181,15 +181,21 @@ body {
     padding-bottom: 0.5rem;
 }
 
-.command-group {
+.download-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.download-item {
     margin-bottom: 1rem;
 }
 
-.command-group:last-child {
+.download-item:last-child {
     margin-bottom: 0;
 }
 
-.command-group label {
+.download-item label {
     display: block;
     color: #888;
     font-size: 0.9rem;
