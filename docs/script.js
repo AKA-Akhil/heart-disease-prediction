@@ -12,7 +12,28 @@ const predictBtn = document.getElementById('predictBtn');
 document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', handlePrediction);
     initializePipelineStatus();
+    initializeCopyButtons();
 });
+
+// Initialize copy buttons
+function initializeCopyButtons() {
+    console.log('Initializing copy buttons...');
+    
+    // Add click listeners to copy buttons as backup
+    const copyButtons = document.querySelectorAll('.copy-btn');
+    copyButtons.forEach((btn, index) => {
+        console.log(`Found copy button ${index + 1}:`, btn);
+        
+        // Add event listener as backup to onclick
+        btn.addEventListener('click', function() {
+            const input = btn.previousElementSibling;
+            if (input && input.tagName === 'INPUT') {
+                console.log('Copy button clicked, copying:', input.value);
+                copyToClipboard(input.id);
+            }
+        });
+    });
+}
 
 // Initialize pipeline status monitoring
 async function initializePipelineStatus() {
@@ -336,30 +357,55 @@ function hideResults() {
 // Copy command to clipboard
 function copyToClipboard(elementId) {
     const element = document.getElementById(elementId);
-    element.select();
-    element.setSelectionRange(0, 99999); // For mobile devices
+    const text = element.value;
     
-    try {
-        document.execCommand('copy');
-        
-        // Show visual feedback
-        const copyBtn = element.nextElementSibling;
-        const originalText = copyBtn.textContent;
-        copyBtn.textContent = 'Copied!';
-        copyBtn.style.background = '#4CAF50';
-        
-        setTimeout(() => {
-            copyBtn.textContent = originalText;
-            copyBtn.style.background = '';
-        }, 2000);
-        
-    } catch (err) {
-        console.error('Could not copy text: ', err);
-        // Fallback for newer browsers
-        navigator.clipboard.writeText(element.value).then(() => {
-            console.log('Text copied to clipboard');
+    // Show visual feedback immediately
+    const copyBtn = element.nextElementSibling;
+    const originalText = copyBtn.textContent;
+    
+    // Modern clipboard API (preferred)
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+            console.log('Text copied to clipboard using modern API');
+            showCopyFeedback(copyBtn, originalText);
         }).catch(err => {
-            console.error('Could not copy text: ', err);
+            console.error('Modern clipboard API failed: ', err);
+            // Fallback to older method
+            fallbackCopyToClipboard(element, copyBtn, originalText);
         });
+    } else {
+        // Fallback for older browsers or non-secure contexts
+        fallbackCopyToClipboard(element, copyBtn, originalText);
     }
+}
+
+// Fallback copy method
+function fallbackCopyToClipboard(element, copyBtn, originalText) {
+    try {
+        element.select();
+        element.setSelectionRange(0, 99999); // For mobile devices
+        
+        const successful = document.execCommand('copy');
+        if (successful) {
+            console.log('Text copied to clipboard using fallback method');
+            showCopyFeedback(copyBtn, originalText);
+        } else {
+            throw new Error('Copy command failed');
+        }
+    } catch (err) {
+        console.error('Fallback copy failed: ', err);
+        // Last resort - show the text for manual copy
+        prompt('Copy this command manually:', element.value);
+    }
+}
+
+// Show copy feedback
+function showCopyFeedback(copyBtn, originalText) {
+    copyBtn.textContent = 'Copied!';
+    copyBtn.style.background = '#4CAF50';
+    
+    setTimeout(() => {
+        copyBtn.textContent = originalText;
+        copyBtn.style.background = '';
+    }, 2000);
 }
