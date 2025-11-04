@@ -123,7 +123,7 @@ function updatePipelineUI(workflowRun) {
                 const statusElement = document.getElementById(`${stage}-status`);
                 
                 element.className = 'stage success';
-                statusElement.textContent = '✅';
+                statusElement.textContent = 'Done';
             });
         } else if (conclusion === 'failure') {
             // Mark stages as failed (simplified)
@@ -133,10 +133,10 @@ function updatePipelineUI(workflowRun) {
                 
                 if (index < 2) { // Assume failure in later stages
                     element.className = 'stage success';
-                    statusElement.textContent = '✅';
+                    statusElement.textContent = 'Done';
                 } else {
                     element.className = 'stage failed';
-                    statusElement.textContent = '❌';
+                    statusElement.textContent = 'Failed';
                     return; // Stop at first failure
                 }
             });
@@ -154,7 +154,7 @@ function showDemoStatus() {
             const statusElement = document.getElementById(`${stage}-status`);
             
             element.className = 'stage success';
-            statusElement.textContent = '✅';
+            statusElement.textContent = 'Done';
         }, index * 1000);
     });
     
@@ -181,12 +181,12 @@ function updateRunningStatus() {
             for (let i = 0; i < currentStage; i++) {
                 const prevStage = stages[i];
                 document.getElementById(`${prevStage}-stage`).className = 'stage success';
-                document.getElementById(`${prevStage}-status`).textContent = '✅';
+                document.getElementById(`${prevStage}-status`).textContent = 'Done';
             }
             
             // Current stage running
             element.className = 'stage running';
-            statusElement.textContent = '⏳';
+            statusElement.textContent = 'Running';
             
             currentStage++;
         } else {
@@ -194,7 +194,7 @@ function updateRunningStatus() {
             // All stages complete
             stages.forEach(stage => {
                 document.getElementById(`${stage}-stage`).className = 'stage success';
-                document.getElementById(`${stage}-status`).textContent = '✅';
+                document.getElementById(`${stage}-status`).textContent = 'Done';
             });
         }
     }, 2000);
