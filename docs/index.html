@@ -25,24 +25,24 @@
                         </div>
                         <div class="pipeline-stages">
                             <div class="stage" id="test-stage">
-                                <span class="stage-icon">🧪</span>
                                 <span class="stage-name">Test</span>
-                                <span class="stage-status" id="test-status">⏳</span>
+                                <span class="stage-status" id="test-status">pending</span>
+                                <span class="stage-time" id="test-time"></span>
                             </div>
                             <div class="stage" id="train-stage">
-                                <span class="stage-icon">🤖</span>
                                 <span class="stage-name">Train</span>
-                                <span class="stage-status" id="train-status">⏳</span>
+                                <span class="stage-status" id="train-status">pending</span>
+                                <span class="stage-time" id="train-time"></span>
                             </div>
                             <div class="stage" id="build-stage">
-                                <span class="stage-icon">🐳</span>
                                 <span class="stage-name">Build</span>
-                                <span class="stage-status" id="build-status">⏳</span>
+                                <span class="stage-status" id="build-status">pending</span>
+                                <span class="stage-time" id="build-time"></span>
                             </div>
                             <div class="stage" id="deploy-stage">
-                                <span class="stage-icon">🚀</span>
                                 <span class="stage-name">Deploy</span>
-                                <span class="stage-status" id="deploy-status">⏳</span>
+                                <span class="stage-status" id="deploy-status">pending</span>
+                                <span class="stage-time" id="deploy-time"></span>
                             </div>
                         </div>
                         <div class="pipeline-actions">
@@ -50,9 +50,32 @@
                                target="_blank" class="action-button">
                                 View Full Pipeline
                             </a>
-                            <button id="downloadContainer" class="action-button download-btn" disabled>
-                                Download Container
-                            </button>
+                        </div>
+                        
+                        <!-- Container Download Section -->
+                        <div class="container-download" id="containerSection" style="display: none;">
+                            <h4>Download Container</h4>
+                            <div class="command-group">
+                                <label>Docker Pull Command:</label>
+                                <div class="command-field">
+                                    <input type="text" id="dockerCommand" readonly>
+                                    <button class="copy-btn" onclick="copyCommand('dockerCommand')">Copy</button>
+                                </div>
+                            </div>
+                            <div class="command-group">
+                                <label>GitHub CLI Command:</label>
+                                <div class="command-field">
+                                    <input type="text" id="ghCommand" readonly>
+                                    <button class="copy-btn" onclick="copyCommand('ghCommand')">Copy</button>
+                                </div>
+                            </div>
+                            <div class="command-group">
+                                <label>Registry URL:</label>
+                                <div class="command-field">
+                                    <input type="text" id="registryUrl" readonly>
+                                    <button class="copy-btn" onclick="copyCommand('registryUrl')">Copy</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
