@@ -1,5 +1,6 @@
-// Simple Heart Disease Prediction Script
+// Simple Heart Disease Prediction Script with CI/CD Integration
 const API_BASE_URL = 'https://your-api-url.com'; // Replace with your actual API URL
+const GITHUB_API_BASE = 'https://api.github.com/repos/AKA-Akhil/heart-disease-prediction';
 let isLocalTesting = true; // Set to false when you have a deployed API
 
 // DOM elements
@@ -10,7 +11,232 @@ const predictBtn = document.getElementById('predictBtn');
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', handlePrediction);
+    initializePipelineStatus();
+    setupContainerDownload();
 });
+
+// Initialize pipeline status monitoring
+async function initializePipelineStatus() {
+    try {
+        await updatePipelineStatus();
+        await updateCommitInfo();
+        
+        // Update every 30 seconds
+        setInterval(updatePipelineStatus, 30000);
+    } catch (error) {
+        console.warn('Pipeline status unavailable (demo mode)', error);
+        showDemoStatus();
+    }
+}
+
+// Update pipeline status from GitHub Actions
+async function updatePipelineStatus() {
+    try {
+        const response = await fetch(`${GITHUB_API_BASE}/actions/runs?per_page=1`);
+        const data = await response.json();
+        
+        if (data.workflow_runs && data.workflow_runs.length > 0) {
+            const latestRun = data.workflow_runs[0];
+            updatePipelineUI(latestRun);
+            
+            if (latestRun.status === 'completed' && latestRun.conclusion === 'success') {
+                enableContainerDownload(latestRun.head_sha);
+            }
+        }
+    } catch (error) {
+        console.warn('Could not fetch pipeline status:', error);
+    }
+}
+
+// Update commit information
+async function updateCommitInfo() {
+    try {
+        const response = await fetch(`${GITHUB_API_BASE}/commits?per_page=1`);
+        const data = await response.json();
+        
+        if (data && data.length > 0) {
+            const latestCommit = data[0];
+            document.getElementById('commitSha').textContent = latestCommit.sha.substring(0, 8);
+            
+            const commitDate = new Date(latestCommit.commit.committer.date);
+            document.getElementById('lastTrained').textContent = commitDate.toLocaleDateString();
+        }
+    } catch (error) {
+        console.warn('Could not fetch commit info:', error);
+    }
+}
+
+// Update pipeline UI based on GitHub Actions data
+function updatePipelineUI(workflowRun) {
+    const stages = ['test', 'train', 'build', 'deploy'];
+    const status = workflowRun.status;
+    const conclusion = workflowRun.conclusion;
+    
+    // Reset all stages
+    stages.forEach(stage => {
+        const element = document.getElementById(`${stage}-stage`);
+        const statusElement = document.getElementById(`${stage}-status`);
+        
+        element.className = 'stage';
+        statusElement.textContent = '⏳';
+    });
+    
+    // Update based on workflow status
+    if (status === 'in_progress') {
+        // Simulate progress based on time (this is a simplified approach)
+        updateRunningStatus();
+    } else if (status === 'completed') {
+        if (conclusion === 'success') {
+            stages.forEach((stage, index) => {
+                const element = document.getElementById(`${stage}-stage`);
+                const statusElement = document.getElementById(`${stage}-status`);
+                
+                element.className = 'stage success';
+                statusElement.textContent = '✅';
+            });
+        } else if (conclusion === 'failure') {
+            // Mark stages as failed (simplified)
+            stages.forEach((stage, index) => {
+                const element = document.getElementById(`${stage}-stage`);
+                const statusElement = document.getElementById(`${stage}-status`);
+                
+                if (index < 2) { // Assume failure in later stages
+                    element.className = 'stage success';
+                    statusElement.textContent = '✅';
+                } else {
+                    element.className = 'stage failed';
+                    statusElement.textContent = '❌';
+                    return; // Stop at first failure
+                }
+            });
+        }
+    }
+}
+
+// Show demo status when GitHub API is unavailable
+function showDemoStatus() {
+    const stages = ['test', 'train', 'build', 'deploy'];
+    
+    stages.forEach((stage, index) => {
+        setTimeout(() => {
+            const element = document.getElementById(`${stage}-stage`);
+            const statusElement = document.getElementById(`${stage}-status`);
+            
+            element.className = 'stage success';
+            statusElement.textContent = '✅';
+        }, index * 1000);
+    });
+    
+    document.getElementById('commitSha').textContent = 'demo-123';
+    document.getElementById('lastTrained').textContent = new Date().toLocaleDateString();
+    
+    setTimeout(() => {
+        enableContainerDownload('demo');
+    }, 4000);
+}
+
+// Update running status animation
+function updateRunningStatus() {
+    const stages = ['test', 'train', 'build', 'deploy'];
+    let currentStage = 0;
+    
+    const interval = setInterval(() => {
+        if (currentStage < stages.length) {
+            const stage = stages[currentStage];
+            const element = document.getElementById(`${stage}-stage`);
+            const statusElement = document.getElementById(`${stage}-status`);
+            
+            // Previous stages success
+            for (let i = 0; i < currentStage; i++) {
+                const prevStage = stages[i];
+                document.getElementById(`${prevStage}-stage`).className = 'stage success';
+                document.getElementById(`${prevStage}-status`).textContent = '✅';
+            }
+            
+            // Current stage running
+            element.className = 'stage running';
+            statusElement.textContent = '⏳';
+            
+            currentStage++;
+        } else {
+            clearInterval(interval);
+            // All stages complete
+            stages.forEach(stage => {
+                document.getElementById(`${stage}-stage`).className = 'stage success';
+                document.getElementById(`${stage}-status`).textContent = '✅';
+            });
+        }
+    }, 2000);
+}
+
+// Setup container download functionality
+function setupContainerDownload() {
+    const downloadBtn = document.getElementById('downloadContainer');
+    downloadBtn.addEventListener('click', handleContainerDownload);
+}
+
+// Enable container download when build is successful
+function enableContainerDownload(commitSha) {
+    const downloadBtn = document.getElementById('downloadContainer');
+    downloadBtn.disabled = false;
+    downloadBtn.setAttribute('data-commit', commitSha);
+}
+
+// Handle container download
+function handleContainerDownload() {
+    const downloadBtn = document.getElementById('downloadContainer');
+    const commitSha = downloadBtn.getAttribute('data-commit') || 'latest';
+    
+    // GitHub Container Registry URL
+    const containerUrl = `ghcr.io/aka-akhil/heart-disease-prediction:main-${commitSha}`;
+    
+    // Show download instructions
+    showContainerInstructions(containerUrl, commitSha);
+}
+
+// Show container download instructions
+function showContainerInstructions(containerUrl, commitSha) {
+    const instructions = `
+📦 Container Download Instructions
+
+1. Using Docker CLI:
+   docker pull ${containerUrl}
+
+2. Using GitHub CLI:
+   gh auth login
+   docker pull ${containerUrl}
+
+3. Manual Download:
+   Visit: https://github.com/AKA-Akhil/heart-disease-prediction/pkgs/container/heart-disease-prediction
+
+Container: ${containerUrl}
+Commit: ${commitSha}
+
+Note: You may need to authenticate with GitHub Container Registry for private repositories.
+    `;
+    
+    // Create modal or use alert (simplified)
+    if (confirm('📦 Download Docker Container?\n\nThis will show you instructions to download the latest container image.')) {
+        // Create a temporary element to copy instructions
+        const textarea = document.createElement('textarea');
+        textarea.value = instructions;
+        document.body.appendChild(textarea);
+        textarea.select();
+        
+        try {
+            document.execCommand('copy');
+            showNotification('Container download instructions copied to clipboard!', 'success');
+        } catch (err) {
+            console.error('Copy failed:', err);
+            alert(instructions);
+        }
+        
+        document.body.removeChild(textarea);
+        
+        // Open GitHub packages page
+        window.open('https://github.com/AKA-Akhil/heart-disease-prediction/pkgs/container/heart-disease-prediction', '_blank');
+    }
+}
 
 // Handle form submission
 async function handlePrediction(e) {

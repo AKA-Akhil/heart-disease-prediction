@@ -13,7 +13,74 @@
             <p>Enter patient data to predict heart disease risk</p>
         </header>
 
-        <main>
+        <div class="main-layout">
+            <!-- Pipeline Status Sidebar -->
+            <aside class="pipeline-sidebar">
+                <div class="pipeline-status">
+                    <h3>CI/CD Pipeline Status</h3>
+                    <div class="pipeline-info">
+                        <div class="commit-info">
+                            <span class="commit-label">Latest Commit:</span>
+                            <span id="commitSha" class="commit-sha">Loading...</span>
+                        </div>
+                        <div class="pipeline-stages">
+                            <div class="stage" id="test-stage">
+                                <span class="stage-icon">🧪</span>
+                                <span class="stage-name">Test</span>
+                                <span class="stage-status" id="test-status">⏳</span>
+                            </div>
+                            <div class="stage" id="train-stage">
+                                <span class="stage-icon">🤖</span>
+                                <span class="stage-name">Train</span>
+                                <span class="stage-status" id="train-status">⏳</span>
+                            </div>
+                            <div class="stage" id="build-stage">
+                                <span class="stage-icon">🐳</span>
+                                <span class="stage-name">Build</span>
+                                <span class="stage-status" id="build-status">⏳</span>
+                            </div>
+                            <div class="stage" id="deploy-stage">
+                                <span class="stage-icon">🚀</span>
+                                <span class="stage-name">Deploy</span>
+                                <span class="stage-status" id="deploy-status">⏳</span>
+                            </div>
+                        </div>
+                        <div class="pipeline-actions">
+                            <a href="https://github.com/AKA-Akhil/heart-disease-prediction/actions" 
+                               target="_blank" class="action-button">
+                                View Full Pipeline
+                            </a>
+                            <button id="downloadContainer" class="action-button download-btn" disabled>
+                                Download Container
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Model Info -->
+                <div class="model-info">
+                    <h3>Model Information</h3>
+                    <div class="info-item">
+                        <span class="info-label">Algorithm:</span>
+                        <span class="info-value">Random Forest</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Accuracy:</span>
+                        <span class="info-value">~85%</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Features:</span>
+                        <span class="info-value">13 clinical</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Last Trained:</span>
+                        <span id="lastTrained" class="info-value">Loading...</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
             <form id="predictionForm" class="prediction-form">
                 <div class="form-grid">
                     <div class="form-group">
@@ -144,8 +211,9 @@
                     <span class="label">Confidence:</span>
                     <span id="confidence" class="value"></span>
                 </div>
-            </div>
-        </main>
+                </div>
+            </main>
+        </div>
     </div>
 
     <script src="script.js"></script>

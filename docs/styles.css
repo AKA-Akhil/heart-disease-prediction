@@ -14,9 +14,166 @@ body {
 }
 
 .container {
-    max-width: 800px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
+}
+
+.main-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Pipeline Sidebar */
+.pipeline-sidebar {
+    position: sticky;
+    top: 2rem;
+}
+
+.pipeline-status, .model-info {
+    background: #2a2a2a;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #404040;
+}
+
+.pipeline-status h3, .model-info h3 {
+    color: #fff;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    border-bottom: 2px solid #404040;
+    padding-bottom: 0.5rem;
+}
+
+.commit-info {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background: #1a1a1a;
+    border-radius: 4px;
+}
+
+.commit-label {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.commit-sha {
+    color: #4CAF50;
+    font-family: monospace;
+    font-size: 0.9rem;
+    display: block;
+    margin-top: 0.25rem;
+}
+
+.pipeline-stages {
+    margin-bottom: 1rem;
+}
+
+.stage {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background: #1a1a1a;
+    border-radius: 4px;
+    border-left: 3px solid #404040;
+}
+
+.stage.running {
+    border-left-color: #ff9800;
+    background: #2d2416;
+}
+
+.stage.success {
+    border-left-color: #4CAF50;
+    background: #1a2e1a;
+}
+
+.stage.failed {
+    border-left-color: #f44336;
+    background: #2e1a1a;
+}
+
+.stage-icon {
+    margin-right: 0.75rem;
+    font-size: 1.2rem;
+}
+
+.stage-name {
+    flex: 1;
+    color: #e0e0e0;
+    font-weight: 500;
+}
+
+.stage-status {
+    font-size: 1.1rem;
+}
+
+.pipeline-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.action-button {
+    padding: 0.5rem 1rem;
+    background: #2196F3;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.action-button:hover:not(:disabled) {
+    background: #1976D2;
+}
+
+.download-btn:disabled {
+    background: #666;
+    cursor: not-allowed;
+}
+
+.download-btn:not(:disabled) {
+    background: #4CAF50;
+}
+
+.download-btn:not(:disabled):hover {
+    background: #45a049;
+}
+
+/* Model Info */
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #404040;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.info-value {
+    color: #e0e0e0;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+/* Main Content */
+.main-content {
+    min-height: 100vh;
 }
 
 header {
@@ -202,6 +359,21 @@ button {
 }
 
 /* Responsive design */
+@media (max-width: 1024px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .pipeline-sidebar {
+        position: static;
+        order: 2;
+    }
+    
+    .main-content {
+        order: 1;
+    }
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 1rem;
@@ -221,5 +393,13 @@ button {
     
     button {
         width: 100%;
+    }
+    
+    .pipeline-status, .model-info {
+        padding: 1rem;
+    }
+    
+    .stage {
+        padding: 0.5rem;
     }
 }
