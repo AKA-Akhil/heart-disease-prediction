@@ -222,18 +222,33 @@ body {
 }
 
 .copy-btn {
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1.2rem;
     background: #4CAF50;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 0.85rem;
-    transition: background-color 0.3s;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    min-width: 80px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .copy-btn:hover {
     background: #45a049;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.copy-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.copy-btn:focus {
+    outline: 2px solid #4CAF50;
+    outline-offset: 2px;
 }
 
 .copy-btn.copied {
