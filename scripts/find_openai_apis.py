@@ -173,8 +173,20 @@ class OpenAIScanner:
         except Exception as e:
             print(f"Warning: Could not check git history: {e}", file=sys.stderr)
     
+    def mask_sensitive_data(self, text: str) -> str:
+        """Mask sensitive API keys in text"""
+        # Mask OpenAI API keys
+        text = re.sub(r'sk-[a-zA-Z0-9]{48}', 'sk-***REDACTED***', text)
+        # Mask organization keys
+        text = re.sub(r'org-[a-zA-Z0-9]{24}', 'org-***REDACTED***', text)
+        return text
+    
     def generate_report(self) -> str:
-        """Generate a comprehensive report"""
+        """Generate a comprehensive report with masked sensitive data
+        
+        All API keys are automatically masked before being included in the report
+        to prevent accidental exposure of sensitive credentials.
+        """
         report = []
         report.append("=" * 80)
         report.append("OpenAI API Detection Report")
@@ -190,7 +202,9 @@ class OpenAIScanner:
                 report.append(f"  Type: {finding['type']}")
                 report.append(f"  File: {finding['file']}")
                 report.append(f"  Line: {finding['line']}")
-                report.append(f"  Context: {finding['context']}")
+                # Mask sensitive data in context
+                masked_context = self.mask_sensitive_data(finding['context'])
+                report.append(f"  Context: {masked_context}")
                 report.append("")
         else:
             report.append("✓ No API keys found")
@@ -272,9 +286,24 @@ class OpenAIScanner:
         return "\n".join(report)
     
     def export_json(self, output_file: str) -> None:
-        """Export findings as JSON"""
+        """Export findings as JSON with masked sensitive data"""
+        # Create a copy of findings with masked sensitive data
+        masked_findings = {
+            'api_keys': [],
+            'imports': self.findings['imports'],
+            'env_vars': self.findings['env_vars'],
+            'usage': self.findings['usage'],
+            'git_history': self.findings['git_history']
+        }
+        
+        # Mask API keys in the copy
+        for finding in self.findings['api_keys']:
+            masked_finding = finding.copy()
+            masked_finding['context'] = self.mask_sensitive_data(finding['context'])
+            masked_findings['api_keys'].append(masked_finding)
+        
         with open(output_file, 'w') as f:
-            json.dump(self.findings, f, indent=2)
+            json.dump(masked_findings, f, indent=2)
         print(f"Findings exported to: {output_file}")
 
 
@@ -306,6 +335,8 @@ def main():
         scanner.check_git_history()
     
     # Print report
+    # Note: generate_report() masks all sensitive data (API keys) before printing
+    # to prevent logging sensitive information in clear text
     print(scanner.generate_report())
     
     # Export JSON if requested
