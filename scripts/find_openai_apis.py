@@ -24,8 +24,8 @@ import json
 
 # Patterns to search for
 PATTERNS = {
-    'openai_api_key': r'sk-[a-zA-Z0-9]{48}',  # OpenAI API key pattern
-    'openai_org_key': r'org-[a-zA-Z0-9]{24}',  # OpenAI organization key
+    'openai_api_key': r'sk-(?:proj-)?[a-zA-Z0-9]{48,}',  # OpenAI API key pattern (old and new format)
+    'openai_org_key': r'org-[a-zA-Z0-9-]{20,30}',  # OpenAI organization key
     'openai_import': r'(?:from|import)\s+openai',
     'openai_env_var': r'(?:OPENAI_API_KEY|OPENAI_ORG|OPENAI_API_BASE)',
     'openai_client': r'OpenAI\s*\(',
@@ -175,10 +175,10 @@ class OpenAIScanner:
     
     def mask_sensitive_data(self, text: str) -> str:
         """Mask sensitive API keys in text"""
-        # Mask OpenAI API keys
-        text = re.sub(r'sk-[a-zA-Z0-9]{48}', 'sk-***REDACTED***', text)
+        # Mask OpenAI API keys (both old sk-* and new sk-proj-* formats)
+        text = re.sub(r'sk-(?:proj-)?[a-zA-Z0-9]{48,}', 'sk-***REDACTED***', text)
         # Mask organization keys
-        text = re.sub(r'org-[a-zA-Z0-9]{24}', 'org-***REDACTED***', text)
+        text = re.sub(r'org-[a-zA-Z0-9-]{20,30}', 'org-***REDACTED***', text)
         return text
     
     def generate_report(self) -> str:
